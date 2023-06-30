@@ -1,29 +1,33 @@
 version: '3'
 services:
-  front:
+  frontend:
+    container_name: cfy_client
     build:
       context: './frontend'
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    container_name: frontend
     environment:
       - WATCHPACK_POLLING=true
     networks:
       - mern-stack-network
     depends_on:
       - backend
+  
   backend:
+    container_name: cfy_server
     build:
       context: './backend'
       dockerfile: Dockerfile
     ports:
       - 4000:4000
-    container_name: backend
+    environment:
+      - MONGO_URI=${MONGO_URI}
     networks:
       - mern-stack-network
     depends_on:
       - mongo
+  
   mongo:
     image: mongo
     ports:
@@ -33,10 +37,8 @@ services:
       - mern-stack-network
     volumes:
       - mongoData:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=mlnthapa
-      - MONGO_INITDB_ROOT_PASSWORD=LA1XsG3BlvJ85cWx
-      - MONGO_INITDB_DATABASE=milan
+    
+      
 networks:
   mern-stack-network:
 volumes:
