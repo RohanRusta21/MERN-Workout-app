@@ -1,0 +1,47 @@
+name: Build and Push Docker Image to DockerHub Registry
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  FRONTEND_REPO_NAME: "workout_frontend"
+  BACKEND_REPO_NAME: "workout_backend"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+                    
+      - name: Build Frontend Image
+        run: |
+          cd frontend
+          docker build -t "${DOCKERHUB_USERNAME}/${FRONTEND_REPO_NAME}:$GITHUB_RUN_NUMBER" .
+      
+      - name: Build Backend Image
+        run: |
+          cd backend
+          docker build -t "${DOCKERHUB_USERNAME}/${BACKEND_REPO_NAME}:$GITHUB_RUN_NUMBER" .    
+          
+      - name: Log in to Docker registry
+        run: echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+
+      - name: Push Frontend Image
+        run: docker push "${DOCKERHUB_USERNAME}/${FRONTEND_REPO_NAME}:$GITHUB_RUN_NUMBER"
+        
+      - name: Push Backend Image
+        run: docker push "${DOCKERHUB_USERNAME}/${BACKEND_REPO_NAME}:$GITHUB_RUN_NUMBER"
