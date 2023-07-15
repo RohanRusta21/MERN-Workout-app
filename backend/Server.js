@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 const workoutRoutes = require('./routes/Workouts')
 
+mongoose.set('strictQuery', false);
 //express app
 const app = express()
 
