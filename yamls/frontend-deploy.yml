@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: docker.io/wededo4644/workout_frontend:65
+        image: docker.io/tota6969/workout_frontend:69
         imagePullPolicy: Always
         env:
           - name: REACT_APP_BACKEND_URL
